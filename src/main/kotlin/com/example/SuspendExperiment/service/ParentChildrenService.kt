@@ -11,7 +11,9 @@ on two different threads (see logs)
 THEN, when the "hello job" is done, the
 world job is finally executed.
 Note that "Hello job and "intermediate job" run on different threads
-thanks to different coroutines context
+thanks to different coroutines context.
+The job depending on each other use default context, while the
+intermediate one uses Dispatcher.IO context
  */
 @Service
 class ParentChildrenService(
@@ -22,7 +24,7 @@ class ParentChildrenService(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun doHelloWorld() = channelFlow {
-        val jobDependingOnEachOther = launch(context = Dispatchers.IO) {
+        val jobDependingOnEachOther = launch {
             val helloJob = launch {
                 (1..10).forEach { _ ->
                     delay(1000L)
@@ -38,7 +40,7 @@ class ParentChildrenService(
             }
         }
 
-        val intermediateJob = launch {
+        val intermediateJob = launch(context = Dispatchers.IO) {
             (1..5).forEach { _ ->
                 delay(1000L)
                 send(doIntermediate())

@@ -1,48 +1,44 @@
-package com.example.SuspendExperiment.controller
+package com.example.SuspendExperiment.service
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
-
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.stereotype.Service
 import java.util.logging.Logger
 
 /*
-endpoint which gives "hello world",
+gives "hello world",
 doing the "hello job" and "world job"
 on two different threads (see logs), working concurrently
  */
-@RestController
-class DelayController {
-    private val log = Logger.getLogger(DelayController::class.java.simpleName)
+@Service
+class DelayService : HelloWorld {
 
-    @GetMapping("/delay")
-    suspend fun index(): Flow<String> = doHelloWorldJob()
-
+    private val log = Logger.getLogger(DelayService::class.java.simpleName)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun doHelloWorldJob(): Flow<String> = channelFlow {
+    suspend fun doHelloWorld(): Flow<String> = channelFlow {
         launch {
-            send(doSuspendWorldJob())
+            send(doWorld())
             log.info("world job done on thread: ${Thread.currentThread().name}")
         }
-        send(doSuspendHelloJob())
+        send(doHello())
         log.info("hello job done on thread: ${Thread.currentThread().name}")
     }
 
-    suspend fun doSuspendWorldJob(): String =
+    override suspend fun doWorld(): String =
         coroutineScope {
             async {
-                delay(2000L);
+                delay(2000L)
                 "world "
             }
         }.await()
 
-    suspend fun doSuspendHelloJob(): String =
+    override suspend fun doHello(): String =
         coroutineScope {
             async {
                 "hello "
             }
         }.await()
+
 }

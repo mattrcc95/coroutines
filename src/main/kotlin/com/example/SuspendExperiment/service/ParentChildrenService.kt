@@ -9,7 +9,9 @@ import java.util.logging.Logger
 doing "hello job" and "intermediate job" concurrently
 on two different threads (see logs)
 THEN, when the "hello job" is done, the
-world job is finally executed
+world job is finally executed.
+Note that "Hello job and "intermediate job" run on different threads
+thanks to different coroutines context
  */
 @Service
 class ParentChildrenService(
@@ -20,34 +22,35 @@ class ParentChildrenService(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun doHelloWorld() = channelFlow {
-        val helloJob = launch {
-            (1..10).forEach { _ ->
-                delay(1000L)
-                send(doHello())
+        val jobDependingOnEachOther = launch(context = Dispatchers.IO) {
+            val helloJob = launch {
+                (1..10).forEach { _ ->
+                    delay(1000L)
+                    send(doHello())
+                }
+                log.info("hello job done on thread: ${Thread.currentThread().name}")
             }
-            log.info("hello job done on thread: ${Thread.currentThread().name}")
+
+            val worldJob = launch {
+                helloJob.join()
+                send(doWorld())
+                log.info("world job done on thread: ${Thread.currentThread().name}")
+            }
         }
 
-        val intermediateJob = async {
-            //doIntermediate()
+        val intermediateJob = launch {
             (1..5).forEach { _ ->
                 delay(1000L)
                 send(doIntermediate())
             }
             log.info("intermediate job done on thread: ${Thread.currentThread().name}")
-        }.await()
-
-        val worldJob = launch {
-            helloJob.join()
-            send(doWorld())
-            log.info("world job done on thread: ${Thread.currentThread().name}")
         }
     }
 
     suspend fun doIntermediate(): String =
         coroutineScope {
             async {
-                "meanwhile hello... "
+                "-meanwhile hello...- "
             }
         }.await()
 

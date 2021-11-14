@@ -11,13 +11,13 @@ import java.util.logging.Logger
 /*
 endpoint which gives "hello world",
 doing the "hello job" and "world job"
-on two different threads, working concurrently
+on two different threads (see logs), working concurrently
  */
 @RestController
 class DelayController {
     private val log = Logger.getLogger(DelayController::class.java.simpleName)
 
-    @GetMapping("/try")
+    @GetMapping("/delay")
     suspend fun index(): Flow<String> = doHelloWorldJob()
 
 
@@ -45,5 +45,4 @@ class DelayController {
                 "hello "
             }
         }.await()
-
 }

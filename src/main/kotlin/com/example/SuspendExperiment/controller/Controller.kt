@@ -1,6 +1,7 @@
 package com.example.SuspendExperiment.controller
 
 import com.example.SuspendExperiment.service.DelayService
+import com.example.SuspendExperiment.service.JobWhichUsesAnotherJobService
 import com.example.SuspendExperiment.service.ParentChildrenService
 import kotlinx.coroutines.flow.Flow
 import org.springframework.web.bind.annotation.GetMapping
@@ -10,7 +11,8 @@ import java.util.logging.Logger
 @RestController
 class Controller(
     private val delayService: DelayService,
-    private val parentChildrenService: ParentChildrenService
+    private val parentChildrenService: ParentChildrenService,
+    private val jobWhichUsesAnotherJobService: JobWhichUsesAnotherJobService
 ) {
     private val log = Logger.getLogger(Controller::class.java.simpleName)
 
@@ -19,5 +21,8 @@ class Controller(
 
     @GetMapping("/parentChildren")
     suspend fun index2(): Flow<String> = parentChildrenService.doHelloWorld()
+
+    @GetMapping("/helpingJobs")
+    suspend fun index3(): Flow<String> = jobWhichUsesAnotherJobService.doHelloWorld()
 
 }

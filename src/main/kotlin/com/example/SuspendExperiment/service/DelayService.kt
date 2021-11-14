@@ -19,6 +19,7 @@ class DelayService : HelloWorld {
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun doHelloWorld(): Flow<String> = channelFlow {
         launch {
+            delay(2000L)
             send(doWorld())
             log.info("world job done on thread: ${Thread.currentThread().name}")
         }
@@ -29,7 +30,6 @@ class DelayService : HelloWorld {
     override suspend fun doWorld(): String =
         coroutineScope {
             async {
-                delay(2000L)
                 "world "
             }
         }.await()

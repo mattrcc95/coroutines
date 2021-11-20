@@ -2,6 +2,7 @@ package com.example.SuspendExperiment.controller
 
 import com.example.SuspendExperiment.service.DelayService
 import com.example.SuspendExperiment.service.JobWhichUsesAnotherJobService
+import com.example.SuspendExperiment.service.NParallelJobsService
 import com.example.SuspendExperiment.service.ParentChildrenService
 import kotlinx.coroutines.flow.Flow
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,7 +13,8 @@ import java.util.logging.Logger
 class Controller(
     private val delayService: DelayService,
     private val parentChildrenService: ParentChildrenService,
-    private val jobWhichUsesAnotherJobService: JobWhichUsesAnotherJobService
+    private val jobWhichUsesAnotherJobService: JobWhichUsesAnotherJobService,
+    private val nParallelJobsService: NParallelJobsService,
 ) {
     private val log = Logger.getLogger(Controller::class.java.simpleName)
 
@@ -24,5 +26,16 @@ class Controller(
 
     @GetMapping("/helpingJobs")
     suspend fun index3(): Flow<String> = jobWhichUsesAnotherJobService.doHelloWorld()
+
+    @GetMapping("/parallels")
+    suspend fun index4(): String {
+        nParallelJobsService.doParallelJobs()
+        return "done"
+    }
+    @GetMapping("/twoParallels")
+    suspend fun index5(): String {
+        nParallelJobsService.twoParallelJobs()
+        return "done"
+    }
 
 }

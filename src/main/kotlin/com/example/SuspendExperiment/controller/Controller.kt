@@ -32,10 +32,4 @@ class Controller(
         nParallelJobsService.doParallelJobs()
         return "done"
     }
-    @GetMapping("/twoParallels")
-    suspend fun index5(): String {
-        nParallelJobsService.twoParallelJobs()
-        return "done"
-    }
-
 }

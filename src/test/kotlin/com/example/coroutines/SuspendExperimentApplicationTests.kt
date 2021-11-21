@@ -1,4 +1,4 @@
-package com.example.SuspendExperiment
+package com.example.coroutines
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

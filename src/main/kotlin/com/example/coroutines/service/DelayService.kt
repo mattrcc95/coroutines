@@ -1,4 +1,4 @@
-package com.example.SuspendExperiment.service
+package com.example.coroutines.service
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow

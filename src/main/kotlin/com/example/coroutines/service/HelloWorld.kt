@@ -1,4 +1,4 @@
-package com.example.SuspendExperiment.service
+package com.example.coroutines.service
 
 interface HelloWorld {
     suspend fun doHello(): String
